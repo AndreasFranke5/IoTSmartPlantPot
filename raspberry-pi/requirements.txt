@@ -1,0 +1,5 @@
+adafruit-circuitpython-ltr390
+RPi.GPIO
+# If you need these, uncomment:
+# paho-mqtt
+# pyserial
