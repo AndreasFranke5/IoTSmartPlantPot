@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>393634355857-jsj08b13bb5bmkeru9fv9qldgd1v36ko.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.393634355857-jsj08b13bb5bmkeru9fv9qldgd1v36ko</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>393634355857-k39psfsfc0knso8guinrn1b24d0ophu2.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBZ_5QorK5LTIzk-ADhvpUt1BRaWWQd-_8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>393634355857</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.smartPlantPot</string>
+	<key>PROJECT_ID</key>
+	<string>smart-plant-pot-iot</string>
+	<key>STORAGE_BUCKET</key>
+	<string>smart-plant-pot-iot.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:393634355857:ios:1dc012de3e8e909d593d30</string>
+	<key>DATABASE_URL</key>
+	<string>https://smart-plant-pot-iot-default-rtdb.europe-west1.firebasedatabase.app</string>
+</dict>
+</plist>
