@@ -27,10 +27,11 @@ class PlantDetailsPage extends StatelessWidget {
                 appBar: AppBar(title: Text('${plant.name} details')),
                 body: SafeArea(
                   child: Center(
-                      child: Padding(
-                    padding: const EdgeInsets.all(40),
-                    child: Text(state.error),
-                  )),
+                    child: Padding(
+                      padding: const EdgeInsets.all(40),
+                      child: Text(state.error),
+                    ),
+                  ),
                 ),
               );
             } else if (state is PlantDetailsSuccess) {
@@ -184,7 +185,10 @@ class PlantDetailsPage extends StatelessWidget {
               );
             }
 
-            return const Center(child: CircularProgressIndicator());
+            return Scaffold(
+              appBar: AppBar(title: Text('${plant.name} details')),
+              body: const SafeArea(child: Center(child: CircularProgressIndicator())),
+            );
           },
         );
       }),
