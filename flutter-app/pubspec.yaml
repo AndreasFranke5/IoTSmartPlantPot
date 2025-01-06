@@ -48,6 +48,10 @@ dependencies:
   fpdart: ^1.1.1
   firebase_auth: ^5.3.4
   flutter_svg: ^2.0.16
+  shared_preferences: ^2.3.5
+  mobile_scanner: ^6.0.2
+  dropdown_search: ^6.0.1
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

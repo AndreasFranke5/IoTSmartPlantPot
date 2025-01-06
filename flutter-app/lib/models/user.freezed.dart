@@ -23,8 +23,7 @@ mixin _$User {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
-  List<Device> get devices => throw _privateConstructorUsedError;
-  List<Plant> get plants => throw _privateConstructorUsedError;
+  String? get image => throw _privateConstructorUsedError;
 
   /// Serializes this User to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -40,12 +39,7 @@ abstract class $UserCopyWith<$Res> {
   factory $UserCopyWith(User value, $Res Function(User) then) =
       _$UserCopyWithImpl<$Res, User>;
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String email,
-      List<Device> devices,
-      List<Plant> plants});
+  $Res call({String id, String name, String email, String? image});
 }
 
 /// @nodoc
@@ -66,8 +60,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? devices = null,
-    Object? plants = null,
+    Object? image = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -82,14 +75,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      devices: null == devices
-          ? _value.devices
-          : devices // ignore: cast_nullable_to_non_nullable
-              as List<Device>,
-      plants: null == plants
-          ? _value.plants
-          : plants // ignore: cast_nullable_to_non_nullable
-              as List<Plant>,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -101,12 +90,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       __$$UserImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String email,
-      List<Device> devices,
-      List<Plant> plants});
+  $Res call({String id, String name, String email, String? image});
 }
 
 /// @nodoc
@@ -124,8 +108,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? devices = null,
-    Object? plants = null,
+    Object? image = freezed,
   }) {
     return _then(_$UserImpl(
       id: null == id
@@ -140,14 +123,10 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      devices: null == devices
-          ? _value._devices
-          : devices // ignore: cast_nullable_to_non_nullable
-              as List<Device>,
-      plants: null == plants
-          ? _value._plants
-          : plants // ignore: cast_nullable_to_non_nullable
-              as List<Plant>,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -156,13 +135,7 @@ class __$$UserImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserImpl implements _User {
   const _$UserImpl(
-      {required this.id,
-      required this.name,
-      required this.email,
-      required final List<Device> devices,
-      required final List<Plant> plants})
-      : _devices = devices,
-        _plants = plants;
+      {required this.id, required this.name, required this.email, this.image});
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserImplFromJson(json);
@@ -173,25 +146,12 @@ class _$UserImpl implements _User {
   final String name;
   @override
   final String email;
-  final List<Device> _devices;
   @override
-  List<Device> get devices {
-    if (_devices is EqualUnmodifiableListView) return _devices;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_devices);
-  }
-
-  final List<Plant> _plants;
-  @override
-  List<Plant> get plants {
-    if (_plants is EqualUnmodifiableListView) return _plants;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_plants);
-  }
+  final String? image;
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, devices: $devices, plants: $plants)';
+    return 'User(id: $id, name: $name, email: $email, image: $image)';
   }
 
   @override
@@ -202,19 +162,12 @@ class _$UserImpl implements _User {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
-            const DeepCollectionEquality().equals(other._devices, _devices) &&
-            const DeepCollectionEquality().equals(other._plants, _plants));
+            (identical(other.image, image) || other.image == image));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      name,
-      email,
-      const DeepCollectionEquality().hash(_devices),
-      const DeepCollectionEquality().hash(_plants));
+  int get hashCode => Object.hash(runtimeType, id, name, email, image);
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -237,8 +190,7 @@ abstract class _User implements User {
       {required final String id,
       required final String name,
       required final String email,
-      required final List<Device> devices,
-      required final List<Plant> plants}) = _$UserImpl;
+      final String? image}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -249,9 +201,7 @@ abstract class _User implements User {
   @override
   String get email;
   @override
-  List<Device> get devices;
-  @override
-  List<Plant> get plants;
+  String? get image;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.

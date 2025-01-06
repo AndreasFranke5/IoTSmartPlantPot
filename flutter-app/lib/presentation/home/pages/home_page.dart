@@ -1,82 +1,152 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_plant_pot/injection.dart';
+import 'package:smart_plant_pot/presentation/auth/auth.dart';
+import 'package:smart_plant_pot/presentation/common/auth/bloc/auth_cubit.dart';
+import 'package:smart_plant_pot/presentation/common/widgets/widgets.dart';
 import 'package:smart_plant_pot/presentation/home/home.dart';
 import 'package:smart_plant_pot/presentation/widgets/chip_rounded.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final GlobalKey<ExpandableFabState> childKey = GlobalKey();
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // backgroundColor: const Color.fromRGBO(230, 228, 215, 1),
-        title: const Text('Smart Plant Pot'),
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(50),
-          child: Wrap(
-            spacing: -6,
-            children: [
-              ChipRounded(
-                label: 'Both',
-                isSelected: true,
-              ),
-              ChipRounded(
-                label: 'Indoor',
-                isSelected: false,
-              ),
-              ChipRounded(
-                label: 'Outdoor',
-                isSelected: false,
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocProvider(
+      create: (context) => getIt<HomeCubit>()
+        ..getDevices()
+        ..getPlants()
+        ..getPlantsStats(),
+      child: Builder(builder: (context) {
+        return BlocListener<AuthCubit, AuthState>(
+          listener: (context, state) {
+            if (state is AuthInitial) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const AuthPage()),
+              );
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              // backgroundColor: const Color.fromRGBO(230, 228, 215, 1),
+              title: const Text('Smart Plant Pot'),
+              actions: [
+                IconButton(
+                  onPressed: context.read<AuthCubit>().logout,
+                  icon: const Icon(Icons.logout_outlined),
+                ),
+              ],
+              bottom: const PreferredSize(
+                preferredSize: Size.fromHeight(50),
+                child: Wrap(
+                  spacing: -6,
                   children: [
-                    const Text(
-                      'My Plants',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ChipRounded(
+                      label: 'Both',
+                      isSelected: true,
                     ),
-                    ElevatedButton(onPressed: () {}, child: const Text('View all'))
+                    ChipRounded(
+                      label: 'Indoor',
+                      isSelected: false,
+                    ),
+                    ChipRounded(
+                      label: 'Outdoor',
+                      isSelected: false,
+                    ),
                   ],
                 ),
               ),
-              const HomeMyPlants(),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ),
+            body: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: Column(
                   children: [
-                    const Text(
-                      'Related Plants',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'My Plants',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          ElevatedButton(onPressed: () {}, child: const Text('View all'))
+                        ],
+                      ),
                     ),
-                    ElevatedButton(onPressed: () {}, child: const Text('View all'))
+                    const HomeMyPlants(),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Related Plants',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          ElevatedButton(onPressed: () {}, child: const Text('View all'))
+                        ],
+                      ),
+                    ),
+                    const HomeRelatedPlants(),
                   ],
                 ),
               ),
-              const HomeRelatedPlants(),
-            ],
+            ),
+            floatingActionButton: ExpandableFab(
+              key: childKey,
+              distance: 80,
+              children: [
+                ActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => AddDevicePage(ctx: context)),
+                    );
+                    if (childKey.currentState != null) childKey.currentState!.toggle();
+                  },
+                  icon: const Text(
+                    'Add Device',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                ActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => AddPlantPage(ctx: context)),
+                    );
+                    if (childKey.currentState != null) childKey.currentState!.toggle();
+                  },
+                  icon: const Text(
+                    'Add Plant',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add, color: Colors.white),
-        onPressed: () {
-          // Add plant
-        },
-      ),
+        );
+      }),
     );
   }
 }
