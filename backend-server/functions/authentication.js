@@ -46,34 +46,32 @@ exports.loginWithGoogle = onRequest(async (request, response) => {
     const { uid, email, name, picture } = decodedToken;
 
     // Check if the user already exists
-    try {
-      await admin.auth().getUser(uid);
-    } catch (error) {
-      if (error.code === 'auth/user-not-found') {
-        // Create a new user if not found
-        await admin.auth().createUser({
-          uid: uid,
-          email: email,
-          displayName: name,
-        });
-      } else {
-        throw error;
-      }
+    const authUser = await admin.auth().getUserByEmail(email);
+    if (!authUser) {
+      await admin.auth().createUser({
+        uid: uid,
+        email: email,
+        displayName: name,
+      });
     }
 
-    // Store additional user information in the Realtime Database
-    const userRef = admin.database().ref(`users/${uid}`);
-
-    await userRef.set({
-      id: uid,
-      name: name,
-      email: email,
-      image: picture,
+    const userRef = admin.database().ref(`users/${authUser.uid}`);
+    const result = await userRef.transaction((user) => {
+      if (!user) {
+        return {
+          id: uid,
+          name: name,
+          email: email,
+          image: picture,
+        };
+      }
     });
-
-    userRef.once('value', (snapshot) => {
-      const user = snapshot.val();
-      response.status(200).json({ ...user, idToken });
+    const userData = result.snapshot.val();
+    response.status(200).json({
+      email: userData.email,
+      name: userData.name,
+      image: userData.image,
+      idToken,
     });
   } catch (error) {
     console.error('Error creating user:', error);
@@ -92,9 +90,10 @@ exports.login = onRequest(async (request, response) => {
 
     // Verify the ID token
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const { uid } = decodedToken;
+    const { email } = decodedToken;
 
-    const userRef = admin.database().ref(`users/${uid}`);
+    const existingUser = await admin.auth().getUserByEmail(email);
+    const userRef = admin.database().ref(`users/${existingUser.id}`);
     await userRef.once('value', (snapshot) => {
       const user = snapshot.val();
       response.status(200).json({ ...user, idToken });

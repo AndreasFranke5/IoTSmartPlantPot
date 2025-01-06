@@ -25,11 +25,12 @@ console.log(
 if (process.env.FUNCTIONS_EMULATOR) {
   // Running locally
   // eslint-disable-next-line max-len
-  const serviceAccount = require('/Users/prageeth-dev/Documents/Uni/1-1/IOT/Project/service.json');
+  const serviceAccount = require('/Users/prageeth-dev/Documents/Uni/1-1/IOT/Project/data/service.json');
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL:
       'https://smart-plant-pot-iot-default-rtdb.europe-west1.firebasedatabase.app',
+    // 'https://smart-plant-pot-iot-default-rtdb.europe-west1.firebasedatabase.app',
   });
 } else {
   // Running in Firebase environment
@@ -44,6 +45,8 @@ exports.addDevice = user.addDevice;
 exports.addNewPlant = user.addNewPlant;
 exports.getUserDevices = user.getUserDevices;
 exports.getUserPlants = user.getUserPlants;
+exports.getUserPlantsStats = user.getUserPlantsStats;
+exports.getPlantSlotDetails = user.getPlantSlotDetails;
 exports.getPlantData = plant.getPlantData;
 exports.getPredefinedPlants = plant.getPredefinedPlants;
 exports.sendPlantUpdates = plant.sendPlantUpdates;

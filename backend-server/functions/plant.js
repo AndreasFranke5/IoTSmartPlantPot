@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 const { onRequest } = require('firebase-functions/v2/https');
 const admin = require('firebase-admin');
+const { get, orderByChild, query } = require('firebase-admin/database');
 
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
@@ -9,15 +10,16 @@ exports.sendPlantUpdates = onRequest(async (request, response) => {
   try {
     const { deviceId, plantId, temperature, moisture } = request.body;
 
+    const createdAt = new Date().valueOf();
     const data = {
       plantId,
       deviceId,
       temperature,
       moisture,
-      createdAt: new Date().valueOf(),
+      createdAt,
     };
 
-    await admin.database().ref(`plantsData`).push(data);
+    await admin.database().ref(`plantsData/${plantId}/${createdAt}`).set(data);
 
     // notify user
     // TODO: send notification to the user if needed
@@ -30,17 +32,49 @@ exports.sendPlantUpdates = onRequest(async (request, response) => {
   }
 });
 
-// TODO: listen to plant data changes and notify the user if needed
-exports.getPlantData = onRequest(async (request, response) => {});
+exports.getPredefinedPlants = onRequest(async (request, response) => {
+  try {
+    // const bearer = request.headers.authorization;
 
-exports.getPredefinedPlants = onRequest((request, response) => {
-  response.json({
-    data: [
-      { id: 1, name: 'plant type 1' },
-      { id: 2, name: 'plant type 2' },
-      { id: 3, name: 'plant type 3' },
-      { id: 4, name: 'plant type 4' },
-      { id: 5, name: 'plant type 5' },
-    ],
-  });
+    // if (!bearer) {
+    //   response.status(400).send('User not authenticated');
+    //   return;
+    // }
+    // const idToken = bearer.split('Bearer ')[1];
+    // // Verify the ID token
+    // const decodedToken = await admin.auth().verifyIdToken(idToken);
+    // if (!decodedToken) {
+    //   response.status(400).send('User not authenticated');
+    //   return;
+    // }
+
+    const { search } = request.query;
+
+    let query = admin
+      .database()
+      .ref(`plants`)
+      .orderByChild('common_name')
+      .limitToFirst(10);
+
+    if (search) {
+      query = query
+        .startAt(search?.toLowerCase())
+        .endAt(search?.toLowerCase() + '\uf8ff'); // "\uf8ff" ensures results start with the prefix
+    }
+    const snapshot = await query.once('value');
+
+    if (snapshot.exists()) {
+      const plants = snapshot.val();
+      return response.status(200).json(
+        Object.keys(plants).map((key) => ({
+          id: key,
+          ...plants[key],
+        }))
+      );
+    }
+    return response.status(200).json([]);
+  } catch (error) {
+    console.error('Error sendPlantUpdates:', error);
+    response.status(500).send('Internal Server Error');
+  }
 });
