@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: widget.toSignUpPage,
-                child: const Text('Goto Sign Up'),
+                child: const Text('Go to Sign Up'),
               ),
               widget.footer,
             ],

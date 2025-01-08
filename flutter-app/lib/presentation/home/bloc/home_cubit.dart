@@ -1,5 +1,6 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:smart_plant_pot/datasources/datasources.dart';
@@ -14,6 +15,12 @@ part 'home_cubit.freezed.dart';
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit(this._userDataSource, this._plantDataSource) : super(HomeState.initial()) {
     getPredefinedPlants();
+
+    Timer.periodic(const Duration(seconds: 30), (timer) {
+      getDevices();
+      getPlants();
+      getPlantsStats();
+    });
   }
 
   final UserDataSource _userDataSource;
@@ -69,7 +76,12 @@ class HomeCubit extends Cubit<HomeState> {
         emit(state.copyWith(plantsStats: [], isLoadingPlantStats: false));
         logger.e(error);
       },
-      (stats) => emit(state.copyWith(plantsStats: stats, isLoadingPlantStats: false)),
+      (stats) async {
+        emit(state.copyWith(isPlantStatsRefreshed: true));
+        emit(state.copyWith(plantsStats: stats, isLoadingPlantStats: false));
+        await Future.delayed(const Duration(seconds: 1));
+        emit(state.copyWith(isPlantStatsRefreshed: false));
+      },
     );
   }
 }

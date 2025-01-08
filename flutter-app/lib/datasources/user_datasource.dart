@@ -1,11 +1,14 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_plant_pot/datasources/utils/flutter_mqtt_client.dart';
 import 'package:smart_plant_pot/dtos/dtos.dart';
 import 'package:smart_plant_pot/logger.dart';
 import 'package:smart_plant_pot/models/models.dart';
-import 'package:smart_plant_pot/models/user.dart';
 
 abstract class UserDataSource {
   Future<Either<String, User>> getUser(String id);
@@ -19,14 +22,19 @@ abstract class UserDataSource {
   Future<Either<String, Unit>> addPlant(AddPlantDto plant);
 
   Future<Either<String, List<PlantStat>>> getUserPlantStats();
+
+  Stream<Either<String, PlantStat>> listenToPlantData(String slotId);
+
+  Either<String, Unit> disconnectListener();
 }
 
 @Singleton(as: UserDataSource)
 class UserDataSourceImpl implements UserDataSource {
   final Dio _httpClient;
   final SharedPreferences _prefs;
+  final FlutterMqttServerClient _mqttClient;
 
-  const UserDataSourceImpl(this._httpClient, this._prefs);
+  const UserDataSourceImpl(this._httpClient, this._prefs, this._mqttClient);
 
   @override
   Future<Either<String, User>> getUser(String id) async {
@@ -143,6 +151,39 @@ class UserDataSourceImpl implements UserDataSource {
       final plantsJsonMapList = List<Map<String, dynamic>>.from(plantsJsonList);
       final plants = plantsJsonMapList.map((d) => PlantStat.fromJson(d)).toList();
       return right(plants);
+    } catch (e) {
+      logger.e(e);
+      return left(e.toString());
+    }
+  }
+
+  @override
+  Stream<Either<String, PlantStat>> listenToPlantData(String slotId) async* {
+    _mqttClient.connect('SMART-PLANT-POT-$slotId');
+    final connected = await _mqttClient.connecting();
+    if (connected) {
+      final controller = StreamController<Either<String, PlantStat>>();
+      _mqttClient.listener.listen(
+        (data) {
+          // logger.d(data);
+          final stat = PlantStat.fromJson(jsonDecode(data));
+          controller.add(Right(stat));
+        },
+        onError: (e) {
+          controller.add(Left(e.toString()));
+          logger.e(e);
+        },
+      );
+
+      yield* controller.stream;
+    }
+  }
+
+  @override
+  Either<String, Unit> disconnectListener() {
+    try {
+      _mqttClient.disconnect();
+      return right(unit);
     } catch (e) {
       logger.e(e);
       return left(e.toString());

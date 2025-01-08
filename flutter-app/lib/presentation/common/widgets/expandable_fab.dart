@@ -182,10 +182,12 @@ class ActionButton extends StatelessWidget {
     super.key,
     this.onPressed,
     required this.icon,
+    this.isActive = true,
   });
 
   final VoidCallback? onPressed;
   final Widget icon;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +196,7 @@ class ActionButton extends StatelessWidget {
       // shape: const CircleBorder(),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       clipBehavior: Clip.antiAlias,
-      color: theme.colorScheme.primary,
+      color: isActive ? theme.colorScheme.primary : Colors.grey,
       elevation: 4,
       child: IconButton(
         padding: const EdgeInsets.symmetric(horizontal: 16),

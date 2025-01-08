@@ -12,11 +12,14 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:mqtt_client/mqtt_server_client.dart' as _i456;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:smart_plant_pot/datasources/auth_datasource.dart' as _i311;
 import 'package:smart_plant_pot/datasources/datasources.dart' as _i1020;
 import 'package:smart_plant_pot/datasources/plant_datasource.dart' as _i260;
 import 'package:smart_plant_pot/datasources/user_datasource.dart' as _i1039;
+import 'package:smart_plant_pot/datasources/utils/flutter_mqtt_client.dart'
+    as _i385;
 import 'package:smart_plant_pot/injection.dart' as _i485;
 import 'package:smart_plant_pot/presentation/common/auth/bloc/auth_cubit.dart'
     as _i812;
@@ -43,23 +46,28 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final externalLibraryInjectableModule = _$ExternalLibraryInjectableModule();
+    gh.singleton<_i456.MqttServerClient>(
+        () => externalLibraryInjectableModule.secureStorage);
     await gh.factoryAsync<_i460.SharedPreferences>(
       () => externalLibraryInjectableModule.prefs,
       preResolve: true,
     );
-    gh.factory<_i601.PlantDetailsDataCubit>(
-        () => _i601.PlantDetailsDataCubit());
     gh.lazySingleton<_i361.Dio>(() => externalLibraryInjectableModule.dio);
     gh.lazySingleton<_i116.GoogleSignIn>(
         () => externalLibraryInjectableModule.googleSignIn);
-    gh.singleton<_i1039.UserDataSource>(() => _i1039.UserDataSourceImpl(
-          gh<_i361.Dio>(),
-          gh<_i460.SharedPreferences>(),
-        ));
     gh.singleton<_i260.PlantDataSource>(() => _i260.PlantDataSourceImpl(
           gh<_i361.Dio>(),
           gh<_i460.SharedPreferences>(),
         ));
+    gh.singleton<_i385.FlutterMqttServerClient>(
+        () => _i385.FlutterMqttServerClient(gh<_i456.MqttServerClient>()));
+    gh.singleton<_i1039.UserDataSource>(() => _i1039.UserDataSourceImpl(
+          gh<_i361.Dio>(),
+          gh<_i460.SharedPreferences>(),
+          gh<_i385.FlutterMqttServerClient>(),
+        ));
+    gh.factory<_i668.PlantDetailsCubit>(
+        () => _i668.PlantDetailsCubit(gh<_i1020.PlantDataSource>()));
     gh.factory<_i282.HomeCubit>(() => _i282.HomeCubit(
           gh<_i1020.UserDataSource>(),
           gh<_i1020.PlantDataSource>(),
@@ -70,14 +78,14 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i361.Dio>(),
           gh<_i460.SharedPreferences>(),
         ));
+    gh.factory<_i601.PlantDetailsDataCubit>(
+        () => _i601.PlantDetailsDataCubit(gh<_i1020.UserDataSource>()));
     gh.factory<_i647.AddPlantCubit>(
         () => _i647.AddPlantCubit(gh<_i1020.UserDataSource>()));
     gh.factory<_i286.AddDeviceCubit>(
         () => _i286.AddDeviceCubit(gh<_i1020.UserDataSource>()));
     gh.singleton<_i812.AuthCubit>(
         () => _i812.AuthCubit(gh<_i1020.AuthDataSource>()));
-    gh.factory<_i668.PlantDetailsCubit>(
-        () => _i668.PlantDetailsCubit(gh<_i1020.PlantDataSource>()));
     return this;
   }
 }

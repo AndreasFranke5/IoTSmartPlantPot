@@ -9,6 +9,7 @@ class HomeState with _$HomeState {
     @Default(false) bool isLoadingPlantStats,
     @Default([]) List<PredefinedPlant> predefinedPlants,
     @Default(false) bool isLoadingPredefinedPlants,
+    @Default(false) bool isPlantStatsRefreshed,
   }) = _HomeState;
 
   factory HomeState.initial() => const HomeState();

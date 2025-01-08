@@ -44,62 +44,62 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.logout_outlined),
                 ),
               ],
-              bottom: const PreferredSize(
-                preferredSize: Size.fromHeight(50),
-                child: Wrap(
-                  spacing: -6,
-                  children: [
-                    ChipRounded(
-                      label: 'Both',
-                      isSelected: true,
-                    ),
-                    ChipRounded(
-                      label: 'Indoor',
-                      isSelected: false,
-                    ),
-                    ChipRounded(
-                      label: 'Outdoor',
-                      isSelected: false,
-                    ),
-                  ],
-                ),
-              ),
+              // bottom: const PreferredSize(
+              //   preferredSize: Size.fromHeight(50),
+              //   child: Wrap(
+              //     spacing: -6,
+              //     children: [
+              //       ChipRounded(
+              //         label: 'Both',
+              //         isSelected: true,
+              //       ),
+              //       ChipRounded(
+              //         label: 'Indoor',
+              //         isSelected: false,
+              //       ),
+              //       ChipRounded(
+              //         label: 'Outdoor',
+              //         isSelected: false,
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ),
             body: SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                child: Column(
+                child: const Column(
                   children: [
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      padding: EdgeInsets.symmetric(horizontal: 4),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'My Plants',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          ElevatedButton(onPressed: () {}, child: const Text('View all'))
+                          // ElevatedButton(onPressed: () {}, child: const Text('View all'))
                         ],
                       ),
                     ),
-                    const HomeMyPlants(),
-                    const SizedBox(height: 10),
+                    HomeMyPlants(),
+                    SizedBox(height: 10),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      padding: EdgeInsets.symmetric(horizontal: 4),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'Related Plants',
+                          Text(
+                            'My Devices',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          ElevatedButton(onPressed: () {}, child: const Text('View all'))
+                          // ElevatedButton(onPressed: () {}, child: const Text('View all'))
                         ],
                       ),
                     ),
-                    const HomeRelatedPlants(),
+                    HomeMyDevices(),
                   ],
                 ),
               ),
@@ -125,22 +125,30 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                ActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => AddPlantPage(ctx: context)),
+                BlocBuilder<HomeCubit, HomeState>(
+                  builder: (context, state) {
+                    return ActionButton(
+                      onPressed: state.devices != null && state.devices!.isNotEmpty
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => AddPlantPage(ctx: context)),
+                              );
+                              if (childKey.currentState != null) childKey.currentState!.toggle();
+                            }
+                          : null,
+                      icon: Text(
+                        'Add Plant',
+                        style: TextStyle(
+                          color: state.devices != null && state.devices!.isNotEmpty
+                              ? Colors.white
+                              : Colors.grey,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     );
-                    if (childKey.currentState != null) childKey.currentState!.toggle();
                   },
-                  icon: const Text(
-                    'Add Plant',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
                 ),
               ],
             ),

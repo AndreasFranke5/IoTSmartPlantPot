@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:smart_plant_pot/models/models.dart';
 
 import 'package:smart_plant_pot/presentation/home/home.dart';
 
 class PlantCard extends StatelessWidget {
-  const PlantCard(this.plant, {super.key});
+  const PlantCard(this.plant, {super.key, required this.isJustRefreshed});
 
   final Plant plant;
+  final bool isJustRefreshed;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class PlantCard extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(width: 4, color: Colors.white),
             borderRadius: BorderRadius.circular(20),
-            color: Theme.of(context).colorScheme.tertiary,
+            color: isJustRefreshed ? Colors.green.withOpacity(.2) : Theme.of(context).colorScheme.tertiary,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,7 +212,7 @@ class PlantCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              stat.sunlight ?? '-',
+                              '${stat.uv?.toString() ?? ' - '} | ${stat.lux?.toString() ?? ' - '}',
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 8),
                             ),
                           ],
@@ -226,7 +226,7 @@ class PlantCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              stat.moisture != null ? '${stat.moisture!.toStringAsFixed(2)}%' : '-',
+                              stat.moisture?.toString() ?? '-',
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 8),
                             ),
                           ],

@@ -56,7 +56,10 @@ class _AddDevicePageState extends State<AddDevicePage> with WidgetsBindingObserv
           }
 
           if (state is AddDeviceSuccess) {
-            context.read<HomeCubit>().getDevices();
+            context.read<HomeCubit>()
+              ..getDevices()
+              ..getPlants()
+              ..getPlantsStats();
             Navigator.of(context).pop();
           } else if (state is AddDeviceError) {
             logger.e(state.error);

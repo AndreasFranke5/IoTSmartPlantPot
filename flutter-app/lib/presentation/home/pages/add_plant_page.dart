@@ -72,7 +72,10 @@ class _AddPlantPageState extends State<AddPlantPage> with WidgetsBindingObserver
             }
 
             if (state is AddPlantSuccess) {
-              context.read<HomeCubit>().getPlants();
+              context.read<HomeCubit>()
+                ..getDevices()
+                ..getPlants()
+                ..getPlantsStats();
               Navigator.of(context).pop();
             } else if (state is AddPlantError) {
               logger.e(state.error);

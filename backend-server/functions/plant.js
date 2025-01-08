@@ -8,18 +8,20 @@ const { get, orderByChild, query } = require('firebase-admin/database');
 
 exports.sendPlantUpdates = onRequest(async (request, response) => {
   try {
-    const { deviceId, plantId, temperature, moisture } = request.body;
+    const { deviceId, slotId, temperature, moisture, uv, lux } = request.body;
 
     const createdAt = new Date().valueOf();
     const data = {
-      plantId,
       deviceId,
+      slotId,
       temperature,
       moisture,
+      uv,
+      lux,
       createdAt,
     };
 
-    await admin.database().ref(`plantsData/${plantId}/${createdAt}`).set(data);
+    await admin.database().ref(`plantsData/${slotId}/${createdAt}`).set(data);
 
     // notify user
     // TODO: send notification to the user if needed

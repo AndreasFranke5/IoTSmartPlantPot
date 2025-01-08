@@ -111,7 +111,7 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: widget.toLoginPage,
-                child: const Text('Goto Login'),
+                child: const Text('Go to Login'),
               ),
               widget.footer,
             ],

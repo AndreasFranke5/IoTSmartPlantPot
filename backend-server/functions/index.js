@@ -9,6 +9,7 @@
  */
 
 const admin = require('firebase-admin');
+const functions = require('firebase-functions');
 
 // Fetch the service account key JSON file contents
 // eslint-disable-next-line max-len

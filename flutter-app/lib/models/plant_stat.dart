@@ -7,11 +7,12 @@ part 'plant_stat.g.dart';
 @freezed
 class PlantStat with _$PlantStat {
   const factory PlantStat({
-    @JsonKey(name: 'plantId') required String slotId,
     required String deviceId,
+    required String slotId,
     double? temperature,
-    String? sunlight,
-    double? moisture,
+    int? moisture,
+    double? uv,
+    double? lux,
   }) = _PlantStat;
 
   factory PlantStat.fromJson(Map<String, dynamic> json) => _$PlantStatFromJson(json);

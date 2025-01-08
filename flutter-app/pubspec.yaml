@@ -52,6 +52,11 @@ dependencies:
   mobile_scanner: ^6.0.2
   dropdown_search: ^6.0.1
   google_fonts: ^6.2.1
+  mqtt_client: ^10.6.3
+
+dependency_overrides:
+  path: ^1.9.1
+  meta: ^1.16.0
 
 dev_dependencies:
   flutter_test:

@@ -20,7 +20,7 @@ class HomeMyPlants extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
-              return PlantCard(state.plants![index]);
+              return PlantCard(state.plants![index], isJustRefreshed: state.isPlantStatsRefreshed);
             },
             itemCount: state.plants!.length,
           ),
