@@ -48,6 +48,7 @@ exports.getUserDevices = user.getUserDevices;
 exports.getUserPlants = user.getUserPlants;
 exports.getUserPlantsStats = user.getUserPlantsStats;
 exports.getPlantSlotDetails = user.getPlantSlotDetails;
+exports.assignNotificationToken = user.assignNotificationToken;
 exports.getPlantData = plant.getPlantData;
 exports.getPredefinedPlants = plant.getPredefinedPlants;
 exports.sendPlantUpdates = plant.sendPlantUpdates;

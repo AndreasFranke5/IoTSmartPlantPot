@@ -41,6 +41,9 @@ class _AuthPageState extends State<AuthPage> {
         }
 
         if (state is Authenticated) {
+          // activate notifications
+          context.read<AuthCubit>().activateNotificationToken();
+
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const HomePage()),
           );

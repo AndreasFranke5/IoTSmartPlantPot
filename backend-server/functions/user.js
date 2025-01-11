@@ -100,6 +100,10 @@ exports.addNewPlant = onRequest(async (request, response) => {
       status: 'data',
     });
 
+    // add plantSlot-users data
+    const plantUsersRef = admin.database().ref(`plantSlotUsers/${slotId}`);
+    plantUsersRef.push(existingUser.uid);
+
     response.status(200).send('Plant added successfully');
   } catch (error) {
     console.error('Error addDevice:', error);
@@ -204,6 +208,8 @@ exports.getUserPlantsStats = onRequest(async (request, response) => {
 
     const snapshot = await userDevicesRef.once('value');
 
+    if (!snapshot.exists()) return response.status(200).json([]);
+
     const slotsList = [];
 
     for (let i = 0; i < Object.values(snapshot.val()).length; i++) {
@@ -304,7 +310,7 @@ exports.getUser = onRequest(async (request, response) => {
     const existingUser = await admin.auth().getUserByEmail(email);
     const userPlantsRef = admin.database().ref(`users/${existingUser.uid}`);
     if (!userPlantsRef) {
-      response.status(404).send('User found');
+      response.status(404).send('User not found');
     }
 
     userPlantsRef.once('value', (snapshot) =>
@@ -312,6 +318,36 @@ exports.getUser = onRequest(async (request, response) => {
         ? response.status(200).json(snapshot.val())
         : response.status(404).send('User found')
     );
+  } catch (error) {
+    console.error('Error getUserPlants:', error);
+    response.status(500).send('Internal Server Error');
+  }
+});
+
+exports.assignNotificationToken = onRequest(async (request, response) => {
+  try {
+    const bearer = request.headers.authorization;
+    const { token } = request.body;
+
+    if (!bearer) {
+      response.status(400).send('User not authenticated');
+      return;
+    }
+    const idToken = bearer.split('Bearer ')[1];
+    // Verify the ID token
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { email } = decodedToken;
+
+    const existingUser = await admin.auth().getUserByEmail(email);
+    const userPlantsRef = admin
+      .database()
+      .ref(`users/${existingUser.uid}/notificationToken`);
+    if (!userPlantsRef) {
+      response.status(404).send('User not found');
+    }
+
+    await userPlantsRef.set(token);
+    response.status(201).send('Notification token added successfully');
   } catch (error) {
     console.error('Error getUserPlants:', error);
     response.status(500).send('Internal Server Error');

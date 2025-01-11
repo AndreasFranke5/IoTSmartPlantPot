@@ -16,6 +16,8 @@ import 'package:mqtt_client/mqtt_server_client.dart' as _i456;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'package:smart_plant_pot/datasources/auth_datasource.dart' as _i311;
 import 'package:smart_plant_pot/datasources/datasources.dart' as _i1020;
+import 'package:smart_plant_pot/datasources/notifications_datasource.dart'
+    as _i86;
 import 'package:smart_plant_pot/datasources/plant_datasource.dart' as _i260;
 import 'package:smart_plant_pot/datasources/user_datasource.dart' as _i1039;
 import 'package:smart_plant_pot/datasources/utils/flutter_mqtt_client.dart'
@@ -55,6 +57,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i361.Dio>(() => externalLibraryInjectableModule.dio);
     gh.lazySingleton<_i116.GoogleSignIn>(
         () => externalLibraryInjectableModule.googleSignIn);
+    gh.singleton<_i86.NotificationsDataSource>(
+        () => _i86.NotificationsDataSourceImpl(
+              gh<_i361.Dio>(),
+              gh<_i460.SharedPreferences>(),
+            ));
     gh.singleton<_i260.PlantDataSource>(() => _i260.PlantDataSourceImpl(
           gh<_i361.Dio>(),
           gh<_i460.SharedPreferences>(),
@@ -84,8 +91,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i647.AddPlantCubit(gh<_i1020.UserDataSource>()));
     gh.factory<_i286.AddDeviceCubit>(
         () => _i286.AddDeviceCubit(gh<_i1020.UserDataSource>()));
-    gh.singleton<_i812.AuthCubit>(
-        () => _i812.AuthCubit(gh<_i1020.AuthDataSource>()));
+    gh.singleton<_i812.AuthCubit>(() => _i812.AuthCubit(
+          gh<_i1020.AuthDataSource>(),
+          gh<_i1020.NotificationsDataSource>(),
+        ));
     return this;
   }
 }

@@ -211,7 +211,7 @@ class PlantDetailsPage extends StatelessWidget {
                                                 ),
                                                 Text(
                                                   dataState.moisture != null
-                                                      ? dataState.moisture!.toString()
+                                                      ? '${dataState.moisture}%'
                                                       : '-',
                                                   style:
                                                       const TextStyle(fontWeight: FontWeight.bold),

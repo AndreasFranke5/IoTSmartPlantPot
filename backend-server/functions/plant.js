@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 const { onRequest } = require('firebase-functions/v2/https');
 const admin = require('firebase-admin');
+const { getMessaging } = require('firebase-admin');
 const { get, orderByChild, query } = require('firebase-admin/database');
 
 // Create and deploy your first functions
@@ -23,9 +24,36 @@ exports.sendPlantUpdates = onRequest(async (request, response) => {
 
     await admin.database().ref(`plantsData/${slotId}/${createdAt}`).set(data);
 
-    // notify user
-    // TODO: send notification to the user if needed
-    // const users = await admin.database().ref(`users/${deviceId}`).once('value');
+    // send notification to the user
+    const users = (
+      await admin.database().ref(`plantSlotUsers/${slotId}`).once('value')
+    ).val();
+    if (users) {
+      const userIds = Object.values(users);
+
+      // send notifications
+      for (let j = 0; j < userIds.length; j++) {
+        const userId = userIds[j];
+
+        const notificationToken = (
+          await admin
+            .database()
+            .ref(`users/${userId}/notificationToken`)
+            .once('value')
+        ).val();
+
+        if (notificationToken) {
+          const notificationData = {
+            data: {
+              title: 'Plant Update',
+              body: `Slot ${slotId} has been updated`,
+            },
+            token: notificationToken,
+          };
+          admin.messaging().send(notificationData);
+        }
+      }
+    }
 
     response.status(200).send('Data added successfully');
   } catch (error) {

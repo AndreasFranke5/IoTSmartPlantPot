@@ -6,3 +6,4 @@ export 'plant_slot.dart';
 export 'predefined_plant.dart';
 export 'plant_stat.dart';
 export 'plant_slot_details.dart';
+export 'notification.dart';

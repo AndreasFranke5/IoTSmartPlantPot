@@ -44,7 +44,9 @@ class PlantCard extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(width: 4, color: Colors.white),
             borderRadius: BorderRadius.circular(20),
-            color: isJustRefreshed ? Colors.green.withOpacity(.2) : Theme.of(context).colorScheme.tertiary,
+            color: isJustRefreshed && plant is PlantData
+                ? Colors.green.withOpacity(.2)
+                : Theme.of(context).colorScheme.tertiary,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -226,7 +228,7 @@ class PlantCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              stat.moisture?.toString() ?? '-',
+                              stat.moisture != null ? '${stat.moisture}%' : '-',
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 8),
                             ),
                           ],

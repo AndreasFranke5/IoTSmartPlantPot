@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:smart_plant_pot/datasources/datasources.dart';
+import 'package:smart_plant_pot/logger.dart';
 import 'package:smart_plant_pot/models/models.dart';
 
 part 'auth_state.dart';
@@ -10,9 +11,10 @@ part 'auth_cubit.freezed.dart';
 
 @singleton
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this._authDataSource) : super(const AuthState.initial());
+  AuthCubit(this._authDataSource, this._notificationsDataSource) : super(const AuthState.initial());
 
   final AuthDataSource _authDataSource;
+  final NotificationsDataSource _notificationsDataSource;
 
   Future<void> loginWithGoogle() async {
     emit(const AuthState.processing());
@@ -57,4 +59,8 @@ class AuthCubit extends Cubit<AuthState> {
       (_) => emit(const AuthState.initial()),
     );
   }
+
+  void activateNotificationToken() => _notificationsDataSource
+    ..activateNotificationToken()
+    ..notificationListener();
 }

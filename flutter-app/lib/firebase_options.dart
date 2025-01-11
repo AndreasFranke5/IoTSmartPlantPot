@@ -66,7 +66,7 @@ class DefaultFirebaseOptions {
     projectId: 'smart-plant-pot-iot',
     databaseURL: 'https://smart-plant-pot-iot-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'smart-plant-pot-iot.firebasestorage.app',
-    androidClientId: '393634355857-k39psfsfc0knso8guinrn1b24d0ophu2.apps.googleusercontent.com',
+    androidClientId: '393634355857-8boh84dig7a37s68r5kro9jss17uftna.apps.googleusercontent.com',
     iosClientId: '393634355857-jsj08b13bb5bmkeru9fv9qldgd1v36ko.apps.googleusercontent.com',
     iosBundleId: 'com.example.smartPlantPot',
   );
@@ -78,7 +78,7 @@ class DefaultFirebaseOptions {
     projectId: 'smart-plant-pot-iot',
     databaseURL: 'https://smart-plant-pot-iot-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'smart-plant-pot-iot.firebasestorage.app',
-    androidClientId: '393634355857-k39psfsfc0knso8guinrn1b24d0ophu2.apps.googleusercontent.com',
+    androidClientId: '393634355857-8boh84dig7a37s68r5kro9jss17uftna.apps.googleusercontent.com',
     iosClientId: '393634355857-jsj08b13bb5bmkeru9fv9qldgd1v36ko.apps.googleusercontent.com',
     iosBundleId: 'com.example.smartPlantPot',
   );
