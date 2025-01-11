@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,13 +51,31 @@ class NotificationsDataSourceImpl implements NotificationsDataSource {
 
   @override
   Future<void> notificationListener() async {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      logger.d('Got a message whilst in the foreground!');
-      logger.d('Message data: ${message.data}');
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
 
-      if (message.notification != null) {
-        logger.d('Message also contained a notification: ${message.notification}');
-      }
+    const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      channelDescription: 'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      icon: '@mipmap/ic_launcher',
+    );
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      await flutterLocalNotificationsPlugin.show(
+        0,
+        message.data['title'] ?? 'Smart Plant Pot',
+        message.data['body'] ?? 'Failed to retrieve message',
+        notificationDetails,
+        payload: 'item x',
+      );
     });
   }
 }

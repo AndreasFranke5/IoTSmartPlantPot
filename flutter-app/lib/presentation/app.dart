@@ -60,6 +60,7 @@ class App extends StatelessWidget {
       create: (context) => getIt<AuthCubit>(),
       child: MaterialApp(
         title: 'Smart Plant Pot',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green).copyWith(
