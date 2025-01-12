@@ -96,13 +96,17 @@ exports.addNewPlant = onRequest(async (request, response) => {
       plantId,
       name,
       image: predefinedPlantRef.val()?.image,
+      watering: predefinedPlantRef.val()?.watering,
+      sunlight: predefinedPlantRef.val()?.sunlight,
       addedOn: new Date().valueOf(),
       status: 'data',
     });
 
     // add plantSlot-users data
-    const plantUsersRef = admin.database().ref(`plantSlotUsers/${slotId}`);
-    plantUsersRef.push(existingUser.uid);
+    const plantUsersRef = admin
+      .database()
+      .ref(`plantSlotUsers/${slotId}/${existingUser.uid}`);
+    plantUsersRef.set({ userId: existingUser.uid });
 
     response.status(200).send('Plant added successfully');
   } catch (error) {
@@ -314,7 +318,7 @@ exports.getUser = onRequest(async (request, response) => {
     userPlantsRef.once('value', (snapshot) =>
       snapshot.exists()
         ? response.status(200).json(snapshot.val())
-        : response.status(404).send('User found')
+        : response.status(404).send('User not found')
     );
   } catch (error) {
     console.error('Error getUserPlants:', error);

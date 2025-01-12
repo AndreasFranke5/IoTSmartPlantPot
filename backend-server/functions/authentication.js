@@ -3,27 +3,30 @@ const admin = require('firebase-admin');
 
 exports.createUser = onRequest(async (request, response) => {
   try {
-    const { email, password, name } = request.body;
+    const { userId, email, name } = request.body;
 
-    if (!email || !password || !name) {
+    if (!userId || !email || !name) {
       response.status(400).send('Invalid input');
       return;
     }
 
-    // Create user in Firebase Authentication
-    const userRecord = await admin.auth().createUser({
-      email: email,
-      password: password,
-      displayName: name,
+    const userRef = admin.database().ref(`users/${userId}`);
+    const result = await userRef.transaction((user) => {
+      if (!user) {
+        return {
+          id: userId,
+          name: name,
+          email: email,
+          // image: picture,
+        };
+      }
     });
-
-    // Store additional user information in the Realtime Database
-    const userId = userRecord.uid;
-    await admin.database().ref(`users/${userId}`).set({
-      id: userId,
-      name: name,
-      email: email,
-    });
+    // const userData = result.snapshot.val();
+    // response.status(200).json({
+    //   email: userData.email,
+    //   name: userData.name,
+    //   image: userData.image,
+    // });
 
     response.status(201).send('User created successfully');
   } catch (error) {
