@@ -56,22 +56,26 @@ class NotificationsDataSourceImpl implements NotificationsDataSource {
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
 
-    const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-      'your channel id',
-      'your channel name',
-      channelDescription: 'your channel description',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-      icon: '@mipmap/ic_launcher',
-    );
-    const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidNotificationDetails);
-
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      final AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
+        message.data['title'] ?? 'Smart Plant Pot',
+        message.data['title'] ?? 'Smart Plant Pot',
+        channelDescription: 'your channel description',
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'ticker',
+        icon: '@mipmap/ic_launcher',
+      );
+      final NotificationDetails notificationDetails =
+          NotificationDetails(android: androidNotificationDetails);
+
       logger.d('Message data: ${message.data}');
+      final int notificationId = int.tryParse(message.data['intId']) != null
+          ? int.parse(message.data['intId'])
+          : DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      logger.d('Notification ID: $notificationId');
       await flutterLocalNotificationsPlugin.show(
-        0,
+        notificationId,
         message.data['title'] ?? 'Smart Plant Pot',
         message.data['body'] ?? 'Failed to retrieve message',
         notificationDetails,

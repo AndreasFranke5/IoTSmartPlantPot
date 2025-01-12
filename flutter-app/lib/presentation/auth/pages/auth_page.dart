@@ -48,6 +48,8 @@ class _AuthPageState extends State<AuthPage> {
             MaterialPageRoute(builder: (context) => const HomePage()),
           );
         } else if (state is AuthFailure) {
+          // show error
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
           logger.e(state.error);
         }
       },

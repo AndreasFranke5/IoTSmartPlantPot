@@ -11,7 +11,7 @@ import 'package:smart_plant_pot/logger.dart';
 import 'package:smart_plant_pot/models/models.dart';
 
 abstract class UserDataSource {
-  Future<Either<String, User>> getUser(String id);
+  Future<Either<String, User>> getUser();
 
   Future<Either<String, List<Device>>> getUserDevices();
 
@@ -37,12 +37,13 @@ class UserDataSourceImpl implements UserDataSource {
   const UserDataSourceImpl(this._httpClient, this._prefs, this._mqttClient);
 
   @override
-  Future<Either<String, User>> getUser(String id) async {
+  Future<Either<String, User>> getUser() async {
     try {
+      final idToken = _prefs.getString('idToken');
       final response = await _httpClient.get(
         '/getUser',
         options: Options(
-          headers: {'authorization': 'Bearer $id'},
+          headers: {'authorization': 'Bearer $idToken'},
         ),
       );
       final user = User.fromJson(response.data);

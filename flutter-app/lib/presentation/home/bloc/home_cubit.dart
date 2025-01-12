@@ -16,12 +16,14 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit(this._userDataSource, this._plantDataSource) : super(HomeState.initial()) {
     getPredefinedPlants();
 
-    Timer.periodic(const Duration(seconds: 30), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
       getDevices();
       getPlants();
       getPlantsStats();
     });
   }
+
+  late Timer _timer;
 
   final UserDataSource _userDataSource;
   final PlantDataSource _plantDataSource;
@@ -83,5 +85,10 @@ class HomeCubit extends Cubit<HomeState> {
         emit(state.copyWith(isPlantStatsRefreshed: false));
       },
     );
+  }
+
+  dispose() {
+    _timer.cancel();
+    super.close();
   }
 }

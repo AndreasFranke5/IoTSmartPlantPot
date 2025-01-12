@@ -29,15 +29,18 @@ class AuthDataSourceImpl implements AuthDataSource {
   @override
   Future<Either<String, models.User>> loginWithEmail(String email, String password) async {
     try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      if (credential.user != null) {
-        await _cacheIdToken(credential);
-        return await _userDataSource.getUser(credential.user!.uid);
+
+      final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      if (idToken == null) {
+        return left('Sign In Failed');
       }
-      return left('An error occurred');
+
+      _cacheIdToken(idToken);
+      return await _userDataSource.getUser();
     } catch (error) {
       return left(error.toString());
     }
@@ -59,7 +62,7 @@ class AuthDataSourceImpl implements AuthDataSource {
         idToken: googleAuth?.idToken,
       );
 
-      final firebaseCred = await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
       final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
@@ -67,12 +70,12 @@ class AuthDataSourceImpl implements AuthDataSource {
         return left('Google Sign In Failed');
       }
 
-      await _cacheIdToken(firebaseCred);
+      _cacheIdToken(idToken);
 
       // login user with google
       await _httpClient.post('/loginWithGoogle', data: {'idToken': idToken});
       // get user data and return
-      return await _userDataSource.getUser(idToken);
+      return await _userDataSource.getUser();
     } catch (error) {
       return left(error.toString());
     }
@@ -85,7 +88,18 @@ class AuthDataSourceImpl implements AuthDataSource {
         email: email,
         password: password,
       );
-      if (credential.user != null) return right(unit);
+      if (credential.user != null) {
+        await _httpClient.post(
+          '/createUser',
+          data: {
+            'userId': credential.user!.uid,
+            'name': name,
+            'email': email,
+          },
+        );
+
+        return right(unit);
+      }
 
       return left('An error occurred');
     } on FirebaseAuthException catch (e) {
@@ -115,8 +129,5 @@ class AuthDataSourceImpl implements AuthDataSource {
     }
   }
 
-  Future<void> _cacheIdToken(UserCredential credential) async {
-    final idToken = await credential.user!.getIdToken();
-    if (idToken != null) _prefs.setString('idToken', idToken);
-  }
+  void _cacheIdToken(String idToken) => _prefs.setString('idToken', idToken);
 }
