@@ -69,6 +69,7 @@ class NotificationsDataSourceImpl implements NotificationsDataSource {
         NotificationDetails(android: androidNotificationDetails);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      logger.d('Message data: ${message.data}');
       await flutterLocalNotificationsPlugin.show(
         0,
         message.data['title'] ?? 'Smart Plant Pot',

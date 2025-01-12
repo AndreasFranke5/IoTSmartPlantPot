@@ -215,8 +215,6 @@ exports.getUserPlantsStats = onRequest(async (request, response) => {
     for (let i = 0; i < Object.values(snapshot.val()).length; i++) {
       const { slots } = Object.values(snapshot.val())[i];
 
-      console.log('slots:', slots);
-
       if (!slots) return response.status(200).json([]);
 
       for (let index = 0; index < Object.values(slots).length; index++) {

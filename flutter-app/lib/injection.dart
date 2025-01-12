@@ -22,8 +22,8 @@ abstract class ExternalLibraryInjectableModule {
   Dio get dio {
     return Dio(
       BaseOptions(
-        // baseUrl: 'http://127.0.0.1:5001/smart-plant-pot-iot/us-central1',
-        baseUrl: 'https://us-central1-smart-plant-pot-iot.cloudfunctions.net',
+        baseUrl: 'http://10.0.2.2:5001/smart-plant-pot-iot/us-central1',
+        // baseUrl: 'https://us-central1-smart-plant-pot-iot.cloudfunctions.net',
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
       ),

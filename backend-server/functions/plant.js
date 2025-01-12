@@ -1,12 +1,16 @@
 /* eslint-disable indent */
 const { onRequest } = require('firebase-functions/v2/https');
 const admin = require('firebase-admin');
-const { getMessaging } = require('firebase-admin');
-const { get, orderByChild, query } = require('firebase-admin/database');
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
+/// send plant updates from the raspberry pi
+/// {
+///   "deviceId": "device1",
+///   "slotId": "slot1",
+///   "temperature": 25,
+///   "moisture": 50,
+///   "uv": 100,
+///   "lux": 1000
+/// }
 exports.sendPlantUpdates = onRequest(async (request, response) => {
   try {
     const { deviceId, slotId, temperature, moisture, uv, lux } = request.body;
@@ -50,6 +54,8 @@ exports.sendPlantUpdates = onRequest(async (request, response) => {
             },
             token: notificationToken,
           };
+          console.log('notificationData:=======>', notificationData);
+
           admin.messaging().send(notificationData);
         }
       }
@@ -62,22 +68,9 @@ exports.sendPlantUpdates = onRequest(async (request, response) => {
   }
 });
 
+// get predefined plants
 exports.getPredefinedPlants = onRequest(async (request, response) => {
   try {
-    // const bearer = request.headers.authorization;
-
-    // if (!bearer) {
-    //   response.status(400).send('User not authenticated');
-    //   return;
-    // }
-    // const idToken = bearer.split('Bearer ')[1];
-    // // Verify the ID token
-    // const decodedToken = await admin.auth().verifyIdToken(idToken);
-    // if (!decodedToken) {
-    //   response.status(400).send('User not authenticated');
-    //   return;
-    // }
-
     const { search } = request.query;
 
     let query = admin
