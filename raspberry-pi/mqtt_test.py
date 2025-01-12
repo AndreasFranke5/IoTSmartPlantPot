@@ -1,5 +1,5 @@
 # Imports for MQTT
-import time,datetime,busio,board,serial,random,json,requests
+import time,datetime,busio,board,serial,random,json,requests,time
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 import RPi.GPIO as GPIO
@@ -84,8 +84,12 @@ def sendSlotDataToServer(data, slotId):
     # print(json.dumps(responseData, indent=4, sort_keys=True))
     # print(data)
     print(response)
-
-
+    # Simple logic to turn pump on if moisture is below a threshold
+    if response.json() is not None and response.json()["startPump"]:
+        GPIO.output(PUMP_PIN, GPIO.HIGH)  # Pump on
+        time.sleep(5)
+        GPIO.output(PUMP_PIN, GPIO.LOW)   # Pump off    
+        
 try:
     while True:
         # Read moisture from Arduino
@@ -117,15 +121,14 @@ try:
             temperature = round(random.uniform(20.1, 22.2), 1)
             
             moist = None
-            print(moisture_values)
             if moisture_values is not None:
                 moist = moisture_values[currentSlotNumber-1];
                 
-                # Simple logic to turn pump on if moisture is below a threshold
-                if moist is not None and moist < 300:
-                    GPIO.output(PUMP_PIN, GPIO.HIGH)  # Pump on
-                else:
-                    GPIO.output(PUMP_PIN, GPIO.LOW)   # Pump off             
+                # # Simple logic to turn pump on if moisture is below a threshold
+                # if moist is not None and moist < 300:
+                #     GPIO.output(PUMP_PIN, GPIO.HIGH)  # Pump on
+                # else:
+                #     GPIO.output(PUMP_PIN, GPIO.LOW)   # Pump off             
              
             payload = {
                 "deviceId": device_id,
