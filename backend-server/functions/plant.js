@@ -70,7 +70,7 @@ exports.sendPlantUpdates = onRequest(async (request, response) => {
           (!lastWatered || lastWatered.val() < createdAt - 1000 * 60 * 15);
 
         let userAction;
-        if (userPlantData.sunlight.includes('Full sun') && uv < 0.5) {
+        if (userPlantData.sunlight.includes('Full sun') && lux < 100) {
           userAction = 'needs to be moved to a place with more light.';
         }
 
